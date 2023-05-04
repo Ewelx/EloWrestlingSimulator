@@ -1,0 +1,2 @@
+SELECT * 
+FROM Nationalities
