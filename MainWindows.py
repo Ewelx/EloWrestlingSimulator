@@ -1,11 +1,8 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QMainWindow
+from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QMainWindow
 from PyQt5.QtGui import QPixmap
 import os
-
-sys.path.insert(0, "windows")
-
-from AddWindows import AddWindows
+import windows.AddWindows as AddWindows
 
 #The windows that showed up at application launch
 class MainWindows(QMainWindow):
@@ -66,7 +63,7 @@ class MainWindows(QMainWindow):
 
     def on_btn_ajouter_clicked(self):
         if self.add_window is None:  # Vérifier si la fenêtre existe déjà
-            self.add_window = AddWindows()
+            self.add_window = AddWindows.AddWindows()
         self.add_window.show()
     
     def on_btn_modifier_clicked(self):

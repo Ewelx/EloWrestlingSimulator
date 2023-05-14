@@ -1,11 +1,14 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout
 from PyQt5.QtCore import Qt
+import sys
+import windows.addWindows.AddFederationWindows as AddFederationWindows
 
 #The windows that show up when click on "Ajouter"
 class AddWindows(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
+        self.add_window = None
 
     def initUI(self):
         #Fenêtre de base de l'écran
@@ -79,7 +82,9 @@ class AddWindows(QWidget):
         print('3')
 
     def on_btn_federation_clicked(self):
-        print('4')
+        if self.add_window is None:  # Vérifier si la fenêtre existe déjà
+            self.add_window = AddFederationWindows.AddFederationWindows()
+        self.add_window.show()
 
     def on_btn_event_clicked(self):
         print('5')

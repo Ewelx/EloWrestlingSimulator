@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS HasOrganisedEvent;
 DROP TABLE IF EXISTS SoloInMatch;
 DROP TABLE IF EXISTS TagInMatch;
 DROP TABLE IF EXISTS StableInMatch;
@@ -27,6 +28,7 @@ CREATE TABLE Nationalities (
 --create federation table
 CREATE TABLE Federations (
 	FederationID INT PRIMARY KEY,
+	FederationAcronym NVARCHAR(5),
 	FederationName NVARCHAR(255),
 	FederationNationality NVARCHAR(255),
 	FederationActive BIT

@@ -1,5 +1,7 @@
 {
     "python.analysis.extraPaths": [
-        "./Windows"
+        "./Windows",
+        "./windows/windows",
+        "./windows/addWindows"
     ]
 }
