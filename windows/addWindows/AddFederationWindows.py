@@ -48,12 +48,12 @@ class AddFederationWindows(QWidget):
         self.cmb_nationality.move(560, 360)
         self.cmb_nationality.resize(280, 30)
 
-        #Boutton permettant d'ajouter la federation 
+        # Boutton permettant d'ajouter la federation 
         btn_add = QPushButton('Ajouter', self)
-        btn_add.move(600, 450)
+        btn_add.move(650, 450)
         btn_add.clicked.connect(self.submit_federation_clicked)
 
-        #Requête permettant  de récupérer l'ensemble des nationnalités
+        # Requête permettant  de récupérer l'ensemble des nationnalités
         server = 'PIERRENOTE\MSSQLSERVER01'
         database = 'WrestlingEloDB'
     
@@ -68,37 +68,58 @@ class AddFederationWindows(QWidget):
 
         results = cursor.fetchall()
 
-        #Ajoute les nationnalités dans le menu déroulant
+        # Ajoute les nationnalités dans le menu déroulant
         for row in results:
             self.cmb_nationality.addItem(row[0])
        
     def submit_federation_clicked(self):
+        # Connection à la BD
+        server = 'PIERRENOTE\MSSQLSERVER01'
+        database = 'WrestlingEloDB'
+        cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server}; \
+                            SERVER=' + server + '; \
+                            DATABASE=' + database +';\
+                            Trusted_Connection=yes;')
+        cursor = cnxn.cursor()
+        
+        # préparation des paramètres de la bd
         acronym = self.txt_acronym.text()
         name = self.txt_name.text()
         nationality = self.cmb_nationality.currentText()
+        # Requête pour récupérer l'ID de la nationalité
+        query = "SELECT NationalityID FROM Nationalities WHERE NationalityName = '{}'"
+        formatted_query = query.format(nationality)
+        cursor.execute(formatted_query)
+        nationality = cursor.fetchone()[0]  # Récupérer la première colonne du résultat
 
         # Vérifier que tous les champs sont remplis
         if acronym and name and nationality:
-            # Insérer la nouvelle fédération dans la base de données
-            server = 'PIERRENOTE\MSSQLSERVER01'
-            database = 'WrestlingEloDB'
-            cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server}; \
-                               SERVER=' + server + '; \
-                               DATABASE=' + database +';\
-                               Trusted_Connection=yes;')
-            cursor = cnxn.cursor()
-            query = "INSERT INTO Federations (FederationName, FederationAcronym, FederationNationality, FederationActive) VALUES (?, ?, ?, 1)"
-            cursor.execute(query, (acronym, name, nationality))
-            cnxn.commit()
+            if len(acronym) <= 5:
+                # Insérer la nouvelle fédération dans la base de données
+                query = "INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalityID, FederationActive) VALUES ('{}', '{}', {}, 1)"
+                formatted_query = query.format(name, acronym, nationality)
+                cursor.execute(formatted_query)
+                cnxn.commit()
 
-            # Afficher un message de confirmation
-            msg_box = QMessageBox()
-            msg_box.setText("La fédération a été ajoutée avec succès.")
-            msg_box.exec_()
+                # Sauvegarde de la query
+                print(formatted_query)
+                with open('BD/InsertFederationsEloDB.sql', 'a') as file:
+                    file.write(formatted_query + "\n")
+                file.close()
+
+                # Afficher un message de confirmation
+                msg_box = QMessageBox()
+                msg_box.setText("The federation have been added.")
+                msg_box.exec_()
+            else:
+                # Afficher un message d'erreur si un champ est manquant
+                msg_box = QMessageBox()
+                msg_box.setText("The limit of characters for acronym is 5.")
+                msg_box.exec_()
         else:
             # Afficher un message d'erreur si un champ est manquant
             msg_box = QMessageBox()
-            msg_box.setText("Veuillez remplir tous les champs.")
+            msg_box.setText("Please fill in all fields.")
             msg_box.exec_()
 
     def center(self):

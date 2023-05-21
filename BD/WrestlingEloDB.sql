@@ -21,21 +21,22 @@ DROP TABLE IF EXISTS Nationalities;
 
 --create nationality table
 CREATE TABLE Nationalities (
-	NationalityID INT PRIMARY KEY,
+	NationalityID INT IDENTITY(1,1) PRIMARY KEY,
 	NationalityName NVARCHAR(255)
 );
 
 --create federation table
 CREATE TABLE Federations (
-	FederationID INT PRIMARY KEY,
-	FederationAcronym NVARCHAR(5),
-	FederationName NVARCHAR(255),
-	FederationNationality NVARCHAR(255),
+	FederationID INT IDENTITY(1,1) PRIMARY KEY,
+	FederationName NVARCHAR(255) NOT NULL,
+	FederationAcronym NVARCHAR(5) NOT NULL,
+	FederationNationalityID INT,
 	FederationActive BIT
+	FOREIGN KEY (FederationNationalityID) REFERENCES Nationalities(NationalityID)
 );
 
 CREATE TABLE Events (
-	EventID INT PRIMARY KEY,
+	EventID INT IDENTITY(1,1) PRIMARY KEY,
 	EventName NVARCHAR(255),
 	EventCountryID INT,
 	EventDate DATETIME,
@@ -45,8 +46,9 @@ CREATE TABLE Events (
 
 --create wrestler table
 CREATE TABLE Wrestlers (
-	WrestlerID INT PRIMARY KEY,
+	WrestlerID INT IDENTITY(1,1) PRIMARY KEY,
 	WrestlerName NVARCHAR(255),
+	WrestlerGender NVARCHAR(6),
 	WrestlerNationalityID INT,
 	WrestlerAlignment NVARCHAR(10),
 	WrestlerFederationID INT,
@@ -58,14 +60,14 @@ CREATE TABLE Wrestlers (
 	WrestlerTie INT,
 	WrestlerLose INT,
 	WrestlerCagematchRating FLOAT,
-	WrestlingTheme NVARCHAR(255),
+	WrestlerTheme NVARCHAR(255),
 	FOREIGN KEY (WrestlerNationalityID) REFERENCES Nationalities(NationalityID),
 	FOREIGN KEY (WrestlerFederationID) REFERENCES Federations(FederationID)
 );
 
 --create tag table
 CREATE TABLE Tags (
-	TagID INT PRIMARY KEY,
+	TagID INT IDENTITY(1,1) PRIMARY KEY,
 	TagName NVARCHAR(255),
 	TagNationalityID INT,
 	TagAlignment NVARCHAR(10),
@@ -85,7 +87,7 @@ CREATE TABLE Tags (
 
 --create stable table
 CREATE TABLE Stables (
-	StableID INT PRIMARY KEY,
+	StableID INT IDENTITY(1,1) PRIMARY KEY,
 	StableName NVARCHAR(255),
 	StableNationalityID INT,
 	StableAlignment NVARCHAR(10),
@@ -102,7 +104,7 @@ CREATE TABLE Stables (
 
 --create title table
 CREATE TABLE Titles (
-	TitleID INT PRIMARY KEY,
+	TitleID INT IDENTITY(1,1) PRIMARY KEY,
 	TitleName NVARCHAR(255),
 	TitleFederation NVARCHAR(255),
 	TitleType NVARCHAR(255),
@@ -112,7 +114,7 @@ CREATE TABLE Titles (
 
 --create match table
 CREATE TABLE Matches (
-	MatchID INT PRIMARY KEY,
+	MatchID INT IDENTITY(1,1) PRIMARY KEY,
 	MatchDate DATETIME,
 	MatchType NVARCHAR(255),
 	MatchWinner NVARCHAR(255),

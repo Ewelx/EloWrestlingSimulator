@@ -1,1 +1,5 @@
-sp_columns Federations
+SELECT *
+FROM Nationalities
+
+SELECT *
+FROM Federations
