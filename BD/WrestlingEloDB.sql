@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS MatchInEvent;
 DROP TABLE IF EXISTS HasOrganisedEvent;
 DROP TABLE IF EXISTS SoloInMatch;
 DROP TABLE IF EXISTS TagInMatch;
@@ -120,7 +121,8 @@ CREATE TABLE Matches (
 	MatchWinner NVARCHAR(255),
 	MatchLoser NVARCHAR(255),
 	MatchStar FLOAT,
-	MatchCagematch FLOAT
+	MatchCagematch FLOAT,
+	MatchTime TIME
 );
 
 --create IsPartTag table
@@ -220,4 +222,13 @@ CREATE TABLE HasOrganisedEvent (
 	FederationID INT,
 	FOREIGN KEY (EventID) REFERENCES Events(EventID),
 	FOREIGN KEY (FederationID) REFERENCES Federations(FederationID)
+)
+
+--create MatchInEvent table
+CREATE TABLE MatchInEvent (
+	EventID INT,
+	MatchID INT,
+	Position INT,
+	FOREIGN KEY (EventID) REFERENCES Events(EventID),
+	FOREIGN KEY (MatchID) REFERENCES Matches(MatchID)
 )

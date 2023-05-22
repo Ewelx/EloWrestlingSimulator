@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QVBoxLayout, QComboBox, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QVBoxLayout, QComboBox, QPushButton, QMessageBox, QDateTimeEdit
 from PyQt5.QtCore import Qt
 import pyodbc
 
-class AddFederationWindows(QWidget):
+class AddEventWindows(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -14,7 +14,7 @@ class AddFederationWindows(QWidget):
         self.center()
 
         # Création du label
-        label = QLabel('Add federation', self)
+        label = QLabel('Add Event', self)
         label.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
         font = label.font()
         font.setBold(True)
@@ -26,30 +26,39 @@ class AddFederationWindows(QWidget):
         layout.addWidget(label)
         self.setLayout(layout)
 
-        # Acronyme de la federation
-        lbl_acronym = QLabel('Acronym (5) * :', self)
-        lbl_acronym.move(560, 210)
-        self.txt_acronym = QLineEdit(self)
-        self.txt_acronym.move(560, 240)
-        self.txt_acronym.resize(280, 30)
-
-        # Nom de la federation
+        # Nom de l'évenement
         lbl_name = QLabel('Name * :', self)
-        lbl_name.move(560, 270)
+        lbl_name.move(560, 210)
         self.txt_name = QLineEdit(self)
-        self.txt_name.move(560, 300)
+        self.txt_name.move(560, 240)
         self.txt_name.resize(280, 30)
 
-        # Nationnalité de la federation
-        lbl_nationality = QLabel('Nationalité * :', self)
-        lbl_nationality.move(560, 330)
-        self.cmb_nationality = QComboBox(self)
-        self.cmb_nationality.move(560, 360)
-        self.cmb_nationality.resize(280, 30)
+        # Pays ou a lieu l'évènement
+        lbl_country = QLabel('Country * :', self)
+        lbl_country.move(560, 270)
+        self.cmb_country = QComboBox(self)
+        self.cmb_country.move(560, 300)
+        self.cmb_country.resize(280, 30)
 
-        # Boutton permettant d'ajouter la federation 
+        # Date de l'évènement
+        lbl_date = QLabel('Date * :', self)
+        lbl_date.move(560, 330)
+        self.date_edit = QDateTimeEdit(self)
+        self.date_edit.setCalendarPopup(True)  # Affiche un calendrier lors de la sélection
+        self.date_edit.setDisplayFormat("yyyy-MM-dd")  # Format d'affichage de la date
+        self.date_edit.move(560, 360)
+        self.date_edit.resize(280, 30)
+
+        # Note cagematch de l'évènement
+        lbl_cagematch = QLabel('Cagematch rating :', self)
+        lbl_cagematch.move(560, 390)
+        self.txt_cagematch = QLineEdit(self)
+        self.txt_cagematch.move(560, 420)
+        self.txt_cagematch.resize(280, 30)
+
+        # Boutton permettant d'ajouter l'évènement 
         btn_add = QPushButton('Add', self)
-        btn_add.move(650, 450)
+        btn_add.move(650, 510)
         btn_add.clicked.connect(self.submit_federation_clicked)
 
         # Requête permettant  de récupérer l'ensemble des nationnalités
@@ -69,7 +78,7 @@ class AddFederationWindows(QWidget):
 
         # Ajoute les nationnalités dans le menu déroulant
         for row in results:
-            self.cmb_nationality.addItem(row[0])
+            self.cmb_country.addItem(row[0])
        
     def submit_federation_clicked(self):
         # Connection à la BD
@@ -82,43 +91,45 @@ class AddFederationWindows(QWidget):
         cursor = cnxn.cursor()
         
         # préparation des paramètres de la bd
-        acronym = self.txt_acronym.text()
         name = self.txt_name.text()
-        nationality = self.cmb_nationality.currentText()
-        # Requête pour récupérer l'ID de la nationalité
-        query = "SELECT NationalityID FROM Nationalities WHERE NationalityName = '{}'"
-        formatted_query = query.format(nationality)
+        country = self.cmb_country.currentText()
+        selected_date = self.date_edit.dateTime()  # Récupérer la date et l'heure sélectionnées
+        formatted_date = selected_date.toString("yyyy-MM-dd HH:mm:ss")  # Formater la date dans le format datetime de SQL
+        cagematch = self.txt_cagematch.text()
+        # Requête pour récupérer l'ID du pays
+        query = "SELECT NationalityName FROM Nationalities WHERE NationalityName = '{}'"
+        formatted_query = query.format(country)
         cursor.execute(formatted_query)
-        nationality = cursor.fetchone()[0]  # Récupérer la première colonne du résultat
+        country = cursor.fetchone()[0]  # Récupérer la première colonne du résultat
 
         # Vérifier que tous les champs sont remplis
-        if acronym and name and nationality:
-            if len(acronym) <= 5:
+        if name and country and formatted_date:
+            if cagematch < 0 or cagematch > 10:
                 # Insérer la nouvelle fédération dans la base de données
-                query = "INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalityID, FederationActive) VALUES ('{}', '{}', {}, 1)"
-                formatted_query = query.format(name, acronym, nationality)
+                query = "INSERT INTO Events (EventName, EventCountryID, EventDate, EventCagematchRating) VALUES ('{}', '{}', {}, {})"
+                formatted_query = query.format(name, country, formatted_date, cagematch)
                 cursor.execute(formatted_query)
                 cnxn.commit()
 
                 # Sauvegarde de la query
                 print(formatted_query)
-                with open('BD/InsertFederationsEloDB.sql', 'a') as file:
+                with open('BD/InsertEventsEloDB.sql', 'a') as file:
                     file.write(formatted_query + "\n")
                 file.close()
 
                 # Afficher un message de confirmation
                 msg_box = QMessageBox()
-                msg_box.setText("The federation have been added.")
+                msg_box.setText("The event have been added.")
                 msg_box.exec_()
             else:
                 # Afficher un message d'erreur si un champ est manquant
                 msg_box = QMessageBox()
-                msg_box.setText("The limit of characters for acronym is 5.")
+                msg_box.setText("The cagematch rating is unvalid (it should be between 0 and 10)")
                 msg_box.exec_()
         else:
             # Afficher un message d'erreur si un champ est manquant
             msg_box = QMessageBox()
-            msg_box.setText("Please fill in all fields.")
+            msg_box.setText("Please fill in all required fields.")
             msg_box.exec_()
 
     def center(self):
