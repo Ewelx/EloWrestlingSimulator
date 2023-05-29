@@ -101,7 +101,6 @@ class AddFederationWindows(QWidget):
                 cnxn.commit()
 
                 # Sauvegarde de la query
-                print(formatted_query)
                 with open('BD/InsertFederationsEloDB.sql', 'a') as file:
                     file.write(formatted_query + "\n")
                 file.close()

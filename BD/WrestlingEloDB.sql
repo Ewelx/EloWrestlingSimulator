@@ -42,6 +42,7 @@ CREATE TABLE Events (
 	EventCountryID INT,
 	EventDate DATETIME,
 	EventCagematchRating FLOAT,
+	EventTheme NVARCHAR(255),
 	FOREIGN KEY (EventCountryID) REFERENCES Nationalities(NationalityID)
 )
 
@@ -115,14 +116,14 @@ CREATE TABLE Titles (
 
 --create match table
 CREATE TABLE Matches (
-	MatchID INT IDENTITY(1,1) PRIMARY KEY,
-	MatchDate DATETIME,
-	MatchType NVARCHAR(255),
-	MatchWinner NVARCHAR(255),
-	MatchLoser NVARCHAR(255),
-	MatchStar FLOAT,
-	MatchCagematch FLOAT,
-	MatchTime TIME
+    MatchID INT IDENTITY(1,1) PRIMARY KEY,
+    MatchDate DATETIME,
+    MatchType NVARCHAR(255),
+    MatchWinner NVARCHAR(255),
+    MatchLoser NVARCHAR(255),
+    MatchStar FLOAT,
+    MatchCagematch FLOAT,
+    MatchTime TIME 
 );
 
 --create IsPartTag table
