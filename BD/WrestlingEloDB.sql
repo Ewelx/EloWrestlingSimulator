@@ -6,9 +6,6 @@ DROP TABLE IF EXISTS StableInMatch;
 DROP TABLE IF EXISTS HasTitleSolo;
 DROP TABLE IF EXISTS HasTitleTag;
 DROP TABLE IF EXISTS HasTitleStable;
-DROP TABLE IF EXISTS IsPartFederationWrestler;
-DROP TABLE IF EXISTS IsPartFederationTag;
-DROP TABLE IF EXISTS IsPartFederationStable;
 DROP TABLE IF EXISTS IsPartTag;
 DROP TABLE IF EXISTS IsPartStable;
 DROP TABLE IF EXISTS Matches;
@@ -142,34 +139,11 @@ CREATE TABLE IsPartStable (
 	FOREIGN KEY (StableID) REFERENCES Stables(StableID)
 )
 
---create IsPartFederationWrestler table
-CREATE TABLE IsPartFederationWrestler (
-	WrestlerID INT,
-	FederationID INT,
-	FOREIGN KEY (WrestlerID) REFERENCES Wrestlers(WrestlerID),
-	FOREIGN KEY (FederationID) REFERENCES Federations(FederationID)
-)
-
---create IsPartFederationTag table
-CREATE TABLE IsPartFederationTag (
-	TagID INT,
-	FederationID INT,
-	FOREIGN KEY (TagID) REFERENCES Tags(TagID),
-	FOREIGN KEY (FederationID) REFERENCES Federations(FederationID)
-)
-
---create IsPartFederationStable table
-CREATE TABLE IsPartFederationStable (
-	StableID INT,
-	FederationID INT,
-	FOREIGN KEY (StableID) REFERENCES Stables(StableID),
-	FOREIGN KEY (FederationID) REFERENCES Federations(FederationID)
-)
-
 --create HasTitleSolo table
 CREATE TABLE HasTitleSolo (
 	WrestlerID INT,
 	TitleID INT,
+	DebutDate DATE,
 	FOREIGN KEY (WrestlerID) REFERENCES Wrestlers(WrestlerID),
 	FOREIGN KEY (TitleID) REFERENCES Titles(TitleID)
 )
@@ -178,6 +152,7 @@ CREATE TABLE HasTitleSolo (
 CREATE TABLE HasTitleTag (
 	TagID INT,
 	TitleID INT,
+	DebutDate DATE,
 	FOREIGN KEY (TagID) REFERENCES Tags(TagID),
 	FOREIGN KEY (TitleID) REFERENCES Titles(TitleID)
 )
@@ -186,6 +161,7 @@ CREATE TABLE HasTitleTag (
 CREATE TABLE HasTitleStable (
 	StableID INT,
 	TitleID INT,
+	DebutDate DATE,
 	FOREIGN KEY (StableID) REFERENCES Stables(StableID),
 	FOREIGN KEY (TitleID) REFERENCES Titles(TitleID)
 )
