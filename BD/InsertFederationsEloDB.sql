@@ -3,3 +3,4 @@ INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalit
 INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalityID, FederationActive) VALUES ('All Elite Wrestling', 'AEW', 179, 1)
 INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalityID, FederationActive) VALUES ('New Japan Pro Wrestling', 'NJPW', 80, 1)
 INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalityID, FederationActive) VALUES ('eqeq', 'e', 40, 1)
+INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalityID, FederationActive) VALUES ('French Wrestling Tournament', 'FWT', 56, 1)

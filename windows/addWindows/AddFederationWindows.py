@@ -1,6 +1,9 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QVBoxLayout, QComboBox, QPushButton, QMessageBox
 from PyQt5.QtCore import Qt
 import pyodbc
+import sys
+sys.path.insert(1, '/')
+import BDConnection
 
 class AddFederationWindows(QWidget):
     def __init__(self):
@@ -53,32 +56,21 @@ class AddFederationWindows(QWidget):
         btn_add.clicked.connect(self.submit_federation_clicked)
 
         # Requête permettant  de récupérer l'ensemble des nationnalités
-        server = 'PIERRENOTE\MSSQLSERVER01'
-        database = 'WrestlingEloDB'
-    
-        cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server}; \
-                           SERVER=' + server + '; \
-                           DATABASE=' + database +';\
-                           Trusted_Connection=yes;')
+        cnxn = BDConnection.BDConnection()
         
         cursor = cnxn.cursor()
         query = "SELECT NationalityName FROM Nationalities"
         cursor.execute(query)
 
         results = cursor.fetchall()
-
+        
         # Ajoute les nationnalités dans le menu déroulant
         for row in results:
             self.cmb_nationality.addItem(row[0])
        
     def submit_federation_clicked(self):
         # Connection à la BD
-        server = 'PIERRENOTE\MSSQLSERVER01'
-        database = 'WrestlingEloDB'
-        cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server}; \
-                            SERVER=' + server + '; \
-                            DATABASE=' + database +';\
-                            Trusted_Connection=yes;')
+        cnxn = BDConnection.BDConnection()
         cursor = cnxn.cursor()
         
         # préparation des paramètres de la bd
