@@ -84,10 +84,16 @@ class AddWindows(QWidget):
     def on_btn_federation_clicked(self):
         if self.add_window is None:  # Vérifier si la fenêtre existe déjà
             self.add_window = AddFederationWindows.AddFederationWindows()
+        else:
+            self.add_window = None
+            self.add_window = AddFederationWindows.AddFederationWindows()
         self.add_window.show()
 
     def on_btn_event_clicked(self):
         if self.add_window is None:  # Vérifier si la fenêtre existe déjà
+            self.add_window = AddEventWindows.AddEventWindows()
+        else:
+            self.add_window = None
             self.add_window = AddEventWindows.AddEventWindows()
         self.add_window.show()
 
