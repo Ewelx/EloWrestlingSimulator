@@ -9,6 +9,3 @@ INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalit
 INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalityID, FederationActive) VALUES ('Evolve Wrestling', 'EW', 179, 1)
 INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalityID, FederationActive) VALUES ('All Pro Wrestling', 'APW', 179, 1)
 INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalityID, FederationActive) VALUES ('Unbeatable Wresting Xtreme', 'UWX', 179, 1)
-INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalityID, FederationActive) VALUES ('World Wrestling Council', 'WWC', 189, 1)
-INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalityID, FederationActive) VALUES ('World Wrestling Council', 'WWC', 179, 1)
-INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalityID, FederationActive) VALUES ('Maryland Championship Wrestling', 'MCW', 179, 1)
