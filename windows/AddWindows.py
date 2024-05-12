@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLay
 from PyQt5.QtCore import Qt
 import windows.addWindows.AddFederationWindows as AddFederationWindows
 import windows.addWindows.AddEventWindows as AddEventWindows
+import windows.addWindows.AddWrestlerWindows as AddWrestlerWindows
 
 #The windows that show up when click on "Ajouter"
 class AddWindows(QWidget):
@@ -9,11 +10,12 @@ class AddWindows(QWidget):
         super().__init__()
         self.initUI()
         self.add_window = None
+        
 
     def initUI(self):
         #Fenêtre de base de l'écran
         self.setWindowTitle('Wrestling Elo Simulator')
-        self.resize(1400, 700)
+        self.setFixedSize(1400, 700)
         self.center()
 
         # Création du label
@@ -73,7 +75,9 @@ class AddWindows(QWidget):
         btn_match.clicked.connect(self.on_btn_match_clicked)
 
     def on_btn_wrestler_clicked(self):
-        print('1')
+        self.add_window = None
+        self.add_window = AddWrestlerWindows.AddWrestlerWindows()
+        self.add_window.show()
     
     def on_btn_tag_team_clicked(self):
         print('2')
@@ -82,19 +86,13 @@ class AddWindows(QWidget):
         print('3')
 
     def on_btn_federation_clicked(self):
-        if self.add_window is None:  # Vérifier si la fenêtre existe déjà
-            self.add_window = AddFederationWindows.AddFederationWindows()
-        else:
-            self.add_window = None
-            self.add_window = AddFederationWindows.AddFederationWindows()
+        self.add_window = None
+        self.add_window = AddFederationWindows.AddFederationWindows()
         self.add_window.show()
 
     def on_btn_event_clicked(self):
-        if self.add_window is None:  # Vérifier si la fenêtre existe déjà
-            self.add_window = AddEventWindows.AddEventWindows()
-        else:
-            self.add_window = None
-            self.add_window = AddEventWindows.AddEventWindows()
+        self.add_window = None
+        self.add_window = AddEventWindows.AddEventWindows()
         self.add_window.show()
 
     def on_btn_title_clicked(self):

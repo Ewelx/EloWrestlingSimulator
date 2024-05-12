@@ -14,7 +14,7 @@ class MainWindows(QMainWindow):
     def initUI(self):
         #Fenêtre de base de l'écran
         self.setWindowTitle('Wrestling Elo Simulator')
-        self.resize(1725, 800)
+        self.setFixedSize(1725, 800)
         self.center()
 
         # Charger l'image en tant que pixmap

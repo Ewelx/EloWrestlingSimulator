@@ -110,6 +110,4 @@ INSERT INTO Events (EventName, EventCountryID, EventDate, EventCagematchRating, 
 INSERT INTO Events (EventName, EventCountryID, EventDate, EventCagematchRating, EventTheme) VALUES ('3CFM Bad Obsessions 2021', '179', '2021-03-27 00:00:00', 7.79, '')
 INSERT INTO Events (EventName, EventCountryID, EventDate, EventCagematchRating, EventTheme) VALUES ('3CFM The Greatest Awards II', '179', '2021-04-24 00:00:00', 8.26, '')
 INSERT INTO Events (EventName, EventCountryID, EventDate, EventCagematchRating, EventTheme) VALUES ('3CFM Made In Heaven IV', '179', '2021-08-28 00:00:00', 8.58, '')
-INSERT INTO Events (EventName, EventCountryID, EventDate, EventCagematchRating, EventTheme) VALUES ('3CFM To The Moon IV', '179', '2021-10-29 00:00:00', 7.82, '')
-INSERT INTO Events (EventName, EventCountryID, EventDate, EventCagematchRating, EventTheme) VALUES ('3CFM Final Fight IV', '179', '2021-12-26 00:00:00', 9.04, '')
-INSERT INTO Events (EventName, EventCountryID, EventDate, EventCagematchRating, EventTheme) VALUES ('3CFM x FWT : Authorized Door', '56', '2022-02-26 00:00:00', 9.41, '')
+INSERT INTO Events (EventName, EventCountryID, EventDate, EventCagematchRating, EventTheme) VALUES ('3CFM To The Moon IV', '179', '2021-10-30 00:00:00', 7.82, '')

@@ -13,7 +13,7 @@ class AddEventWindows(QWidget):
     def initUI(self):
         #Fenêtre de base de l'écran
         self.setWindowTitle('Wrestling Elo Simulator')
-        self.resize(1400, 700)
+        self.setFixedSize(1400, 700)
         self.center()
 
         # Création du label
@@ -55,6 +55,7 @@ class AddEventWindows(QWidget):
         # Note cagematch de l'évènement
         lbl_cagematch = QLabel('Cagematch rating * :', self)
         lbl_cagematch.move(560, 330)
+        lbl_cagematch.resize(280, 20)
         self.txt_cagematch = QLineEdit(self)
         self.txt_cagematch.move(560, 360)
         self.txt_cagematch.resize(280, 30)
@@ -143,37 +144,7 @@ class AddEventWindows(QWidget):
                 msg_box.exec_()
                 return
             if cagematch > 0 or cagematch < 10:
-                # Insérer la nouvelle fédération dans la base de données
-                query = "INSERT INTO Events (EventName, EventCountryID, EventDate, EventCagematchRating, EventTheme) VALUES ('{}', '{}', {}, {}, '{}')"
-                formatted_query = query.format(name, country, "'" + formatted_date + "'", cagematch, theme)
-                cursor.execute(formatted_query)
-                cnxn.commit()
-
-                # Récupération de l'ID de l'événement inséré
-                query = "SELECT MAX(EventID) FROM Events"
-                cursor.execute(query)
-                event_id = cursor.fetchone()[0]
-
-                # Sauvegarde de la query
-                with open('BD/InsertEventsEloDB.sql', 'a') as file:
-                    file.write(formatted_query + "\n")
-                file.close()
-                
-                for federation_id in federations:
-                    query = "INSERT INTO HasOrganisedEvent (EventID, FederationID) VALUES ('{}', '{}')"
-                    formatted_query = query.format(event_id, federation_id)
-                    cursor.execute(formatted_query)
-                    cnxn.commit()
-
-                    # Sauvegarde de la query
-                    with open('BD/InsertHasOrganisedEvent.sql', 'a') as file:
-                        file.write(formatted_query + "\n")
-                    file.close()
-
-                # Afficher un message de confirmation
-                msg_box = QMessageBox()
-                msg_box.setText("The event have been added.")
-                msg_box.exec_()
+                self.insert_event(cursor, cnxn, name, country, formatted_date, cagematch, theme)
             else:
                 # Afficher un message d'erreur si un champ est manquant
                 msg_box = QMessageBox()
@@ -184,6 +155,39 @@ class AddEventWindows(QWidget):
             msg_box = QMessageBox()
             msg_box.setText("Please fill in all required fields.")
             msg_box.exec_()
+
+    def insert_event(cursor, cnxn, name, country, formatted_date, cagematch, theme):
+        # Insérer la nouvelle fédération dans la base de données
+        query = "INSERT INTO Events (EventName, EventCountryID, EventDate, EventCagematchRating, EventTheme) VALUES ('{}', '{}', {}, {}, '{}')"
+        formatted_query = query.format(name, country, "'" + formatted_date + "'", cagematch, theme)
+        cursor.execute(formatted_query)
+        cnxn.commit()
+
+        # Récupération de l'ID de l'événement inséré
+        query = "SELECT MAX(EventID) FROM Events"
+        cursor.execute(query)
+        event_id = cursor.fetchone()[0]
+
+        # Sauvegarde de la query
+        with open('BD/InsertEventsEloDB.sql', 'a') as file:
+            file.write(formatted_query + "\n")
+        file.close()
+                
+        for federation_id in federations:
+            query = "INSERT INTO HasOrganisedEvent (EventID, FederationID) VALUES ('{}', '{}')"
+            formatted_query = query.format(event_id, federation_id)
+            cursor.execute(formatted_query)
+            cnxn.commit()
+
+            # Sauvegarde de la query
+            with open('BD/InsertHasOrganisedEvent.sql', 'a') as file:
+                file.write(formatted_query + "\n")
+            file.close()
+
+        # Afficher un message de confirmation
+        msg_box = QMessageBox()
+        msg_box.setText("The event have been added.")
+        msg_box.exec_()
 
     def center(self):
         frameGm = self.frameGeometry()

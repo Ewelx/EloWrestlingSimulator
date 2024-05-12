@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS HasOrganisedEvent;
 DROP TABLE IF EXISTS SoloInMatch;
 DROP TABLE IF EXISTS TagInMatch;
 DROP TABLE IF EXISTS StableInMatch;
+DROP TABLE IF EXISTS IsPartFederation;
 DROP TABLE IF EXISTS HasTitleSolo;
 DROP TABLE IF EXISTS HasTitleTag;
 DROP TABLE IF EXISTS HasTitleStable;
@@ -49,8 +50,8 @@ CREATE TABLE Wrestlers (
 	WrestlerName NVARCHAR(255),
 	WrestlerGender NVARCHAR(6),
 	WrestlerNationalityID INT,
+	WrestlerDateOfBirth DATETIME,
 	WrestlerAlignment NVARCHAR(10),
-	WrestlerFederationID INT,
 	WrestlerActive BIT,
 	WrestlerElo INT,
 	WrestlerStartElo INT,
@@ -61,7 +62,6 @@ CREATE TABLE Wrestlers (
 	WrestlerCagematchRating FLOAT,
 	WrestlerTheme NVARCHAR(255),
 	FOREIGN KEY (WrestlerNationalityID) REFERENCES Nationalities(NationalityID),
-	FOREIGN KEY (WrestlerFederationID) REFERENCES Federations(FederationID)
 );
 
 --create tag table
@@ -137,6 +137,14 @@ CREATE TABLE IsPartStable (
 	StableID INT,
 	FOREIGN KEY (WrestlerID) REFERENCES Wrestlers(WrestlerID),
 	FOREIGN KEY (StableID) REFERENCES Stables(StableID)
+)
+
+--create IsPartFederation table
+CREATE TABLE IsPartFederation (
+	WrestlerID INT,
+	FederationID INT,
+	FOREIGN KEY (WrestlerID) REFERENCES Wrestlers(WrestlerID),
+	FOREIGN KEY (FederationID) REFERENCES Federations(FederationID)
 )
 
 --create HasTitleSolo table

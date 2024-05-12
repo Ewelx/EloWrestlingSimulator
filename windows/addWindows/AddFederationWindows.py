@@ -1,6 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QVBoxLayout, QComboBox, QPushButton, QMessageBox
 from PyQt5.QtCore import Qt
-import pyodbc
 import sys
 sys.path.insert(1, '/')
 import BDConnection
@@ -13,7 +12,7 @@ class AddFederationWindows(QWidget):
     def initUI(self):
         #Fenêtre de base de l'écran
         self.setWindowTitle('Wrestling Elo Simulator')
-        self.resize(1400, 700)
+        self.setFixedSize(1400, 700)
         self.center()
 
         # Création du label
@@ -86,21 +85,16 @@ class AddFederationWindows(QWidget):
         # Vérifier que tous les champs sont remplis
         if acronym and name and nationality:
             if len(acronym) <= 5:
-                # Insérer la nouvelle fédération dans la base de données
-                query = "INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalityID, FederationActive) VALUES ('{}', '{}', {}, 1)"
-                formatted_query = query.format(name, acronym, nationality)
-                cursor.execute(formatted_query)
-                cnxn.commit()
+                query = "SELECT FederationName FROM Federations WHERE FederationName = ?"
+                cursor.execute(query, name)
+                result_name = cursor.fetchone()
 
-                # Sauvegarde de la query
-                with open('BD/InsertFederationsEloDB.sql', 'a') as file:
-                    file.write(formatted_query + "\n")
-                file.close()
-
-                # Afficher un message de confirmation
-                msg_box = QMessageBox()
-                msg_box.setText("The federation have been added.")
-                msg_box.exec_()
+                if result_name:
+                    msg_box = QMessageBox()
+                    msg_box.setText("The name already exists.")
+                    msg_box.exec_()
+                else :
+                    self.insert_federation(cursor, cnxn, name, acronym, nationality)
             else:
                 # Afficher un message d'erreur si un champ est manquant
                 msg_box = QMessageBox()
@@ -109,8 +103,25 @@ class AddFederationWindows(QWidget):
         else:
             # Afficher un message d'erreur si un champ est manquant
             msg_box = QMessageBox()
-            msg_box.setText("Please fill in all fields.")
+            msg_box.setText("Please fill in all the required fields.")
             msg_box.exec_()
+
+    def insert_federation(cursor, cnxn, name, acronym, nationality):
+        # Insérer la nouvelle fédération dans la base de données
+        query = "INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalityID, FederationActive) VALUES ('{}', '{}', {}, 1)"
+        formatted_query = query.format(name, acronym, nationality)
+        cursor.execute(formatted_query)
+        cnxn.commit()
+
+        # Sauvegarde de la query
+        with open('BD/InsertFederationsEloDB.sql', 'a') as file:
+            file.write(formatted_query + "\n")
+        file.close()
+
+        # Afficher un message de confirmation
+        msg_box = QMessageBox()
+        msg_box.setText("The federation have been added.")
+        msg_box.exec_()
 
     def center(self):
         frameGm = self.frameGeometry()
