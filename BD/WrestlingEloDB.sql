@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS HasTitleTag;
 DROP TABLE IF EXISTS HasTitleStable;
 DROP TABLE IF EXISTS IsPartTag;
 DROP TABLE IF EXISTS IsPartStable;
+DROP TABLE IF EXISTS HaveNationality;
 DROP TABLE IF EXISTS Matches;
 DROP TABLE IF EXISTS Titles;
 DROP TABLE IF EXISTS Stables;
@@ -30,7 +31,7 @@ CREATE TABLE Federations (
 	FederationName NVARCHAR(255) NOT NULL,
 	FederationAcronym NVARCHAR(5) NOT NULL,
 	FederationNationalityID INT,
-	FederationActive BIT
+	FederationActive BIT,
 	FOREIGN KEY (FederationNationalityID) REFERENCES Nationalities(NationalityID)
 );
 
@@ -42,14 +43,13 @@ CREATE TABLE Events (
 	EventCagematchRating FLOAT,
 	EventTheme NVARCHAR(255),
 	FOREIGN KEY (EventCountryID) REFERENCES Nationalities(NationalityID)
-)
+);
 
 --create wrestler table
 CREATE TABLE Wrestlers (
 	WrestlerID INT IDENTITY(1,1) PRIMARY KEY,
 	WrestlerName NVARCHAR(255),
 	WrestlerGender NVARCHAR(6),
-	WrestlerNationalityID INT,
 	WrestlerDateOfBirth DATETIME,
 	WrestlerAlignment NVARCHAR(10),
 	WrestlerActive BIT,
@@ -60,8 +60,7 @@ CREATE TABLE Wrestlers (
 	WrestlerTie INT,
 	WrestlerLose INT,
 	WrestlerCagematchRating FLOAT,
-	WrestlerTheme NVARCHAR(255),
-	FOREIGN KEY (WrestlerNationalityID) REFERENCES Nationalities(NationalityID),
+	WrestlerTheme NVARCHAR(255)
 );
 
 --create tag table
@@ -123,13 +122,21 @@ CREATE TABLE Matches (
     MatchTime TIME 
 );
 
+--create HasNationality table
+CREATE TABLE HaveNationality (
+	WrestlerID INT,
+	NationalityID INT,
+	FOREIGN KEY (WrestlerID) REFERENCES Wrestlers(WrestlerID),
+	FOREIGN KEY (NationalityID) REFERENCES Nationalities(NationalityID)
+);
+
 --create IsPartTag table
 CREATE TABLE IsPartTag (
 	WrestlerID INT,
 	TagID INT,
 	FOREIGN KEY (WrestlerID) REFERENCES Wrestlers(WrestlerID),
 	FOREIGN KEY (TagID) REFERENCES Tags(TagID)
-)
+);
 
 --create IsPartStable table
 CREATE TABLE IsPartStable (
@@ -137,7 +144,7 @@ CREATE TABLE IsPartStable (
 	StableID INT,
 	FOREIGN KEY (WrestlerID) REFERENCES Wrestlers(WrestlerID),
 	FOREIGN KEY (StableID) REFERENCES Stables(StableID)
-)
+);
 
 --create IsPartFederation table
 CREATE TABLE IsPartFederation (
@@ -145,7 +152,7 @@ CREATE TABLE IsPartFederation (
 	FederationID INT,
 	FOREIGN KEY (WrestlerID) REFERENCES Wrestlers(WrestlerID),
 	FOREIGN KEY (FederationID) REFERENCES Federations(FederationID)
-)
+);
 
 --create HasTitleSolo table
 CREATE TABLE HasTitleSolo (
@@ -154,7 +161,7 @@ CREATE TABLE HasTitleSolo (
 	DebutDate DATE,
 	FOREIGN KEY (WrestlerID) REFERENCES Wrestlers(WrestlerID),
 	FOREIGN KEY (TitleID) REFERENCES Titles(TitleID)
-)
+);
 
 --create HasTitleTag table
 CREATE TABLE HasTitleTag (
@@ -163,7 +170,7 @@ CREATE TABLE HasTitleTag (
 	DebutDate DATE,
 	FOREIGN KEY (TagID) REFERENCES Tags(TagID),
 	FOREIGN KEY (TitleID) REFERENCES Titles(TitleID)
-)
+);
 
 --create HasTitleStable table
 CREATE TABLE HasTitleStable (
@@ -172,7 +179,7 @@ CREATE TABLE HasTitleStable (
 	DebutDate DATE,
 	FOREIGN KEY (StableID) REFERENCES Stables(StableID),
 	FOREIGN KEY (TitleID) REFERENCES Titles(TitleID)
-)
+);
 
 --create SoloInMatch table
 CREATE TABLE SoloInMatch (
@@ -181,7 +188,7 @@ CREATE TABLE SoloInMatch (
 	TeamNumber INT,
 	FOREIGN KEY (WrestlerID) REFERENCES Wrestlers(WrestlerID),
 	FOREIGN KEY (MatchID) REFERENCES Matches(MatchID)
-)
+);
 
 --create TagInMatch table
 CREATE TABLE TagInMatch (
@@ -190,7 +197,7 @@ CREATE TABLE TagInMatch (
 	TeamNumber INT,
 	FOREIGN KEY (TagID) REFERENCES Tags(TagID),
 	FOREIGN KEY (MatchID) REFERENCES Matches(MatchID)
-)
+);
 
 --create StableInMatch table
 CREATE TABLE StableInMatch (
@@ -199,7 +206,7 @@ CREATE TABLE StableInMatch (
 	TeamNumber INT,
 	FOREIGN KEY (StableID) REFERENCES Stables(StableID),
 	FOREIGN KEY (MatchID) REFERENCES Matches(MatchID)
-)
+);
 
 --create HasOrganisedEvent table
 CREATE TABLE HasOrganisedEvent (
@@ -207,7 +214,7 @@ CREATE TABLE HasOrganisedEvent (
 	FederationID INT,
 	FOREIGN KEY (EventID) REFERENCES Events(EventID),
 	FOREIGN KEY (FederationID) REFERENCES Federations(FederationID)
-)
+);
 
 --create MatchInEvent table
 CREATE TABLE MatchInEvent (
@@ -216,4 +223,4 @@ CREATE TABLE MatchInEvent (
 	Position INT,
 	FOREIGN KEY (EventID) REFERENCES Events(EventID),
 	FOREIGN KEY (MatchID) REFERENCES Matches(MatchID)
-)
+);

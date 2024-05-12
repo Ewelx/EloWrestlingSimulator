@@ -156,7 +156,7 @@ class AddEventWindows(QWidget):
             msg_box.setText("Please fill in all required fields.")
             msg_box.exec_()
 
-    def insert_event(cursor, cnxn, name, country, formatted_date, cagematch, theme, federations):
+    def insert_event(self, cursor, cnxn, name, country, formatted_date, cagematch, theme, federations):
         # Insérer la nouvelle fédération dans la base de données
         query = "INSERT INTO Events (EventName, EventCountryID, EventDate, EventCagematchRating, EventTheme) VALUES ('{}', '{}', {}, {}, '{}')"
         formatted_query = query.format(name, country, "'" + formatted_date + "'", cagematch, theme)

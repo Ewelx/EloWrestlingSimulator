@@ -1,0 +1,5 @@
+INSERT INTO IsPartFederation (WrestlerID, FederationID) VALUES ('1', '1')
+INSERT INTO IsPartFederation (WrestlerID, FederationID) VALUES ('1', '4')
+INSERT INTO IsPartFederation (WrestlerID, FederationID) VALUES ('2', '3')
+INSERT INTO IsPartFederation (WrestlerID, FederationID) VALUES ('3', '1')
+INSERT INTO IsPartFederation (WrestlerID, FederationID) VALUES ('4', '1')

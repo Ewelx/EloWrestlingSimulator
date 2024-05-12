@@ -106,7 +106,7 @@ class AddFederationWindows(QWidget):
             msg_box.setText("Please fill in all the required fields.")
             msg_box.exec_()
 
-    def insert_federation(cursor, cnxn, name, acronym, nationality):
+    def insert_federation(self, cursor, cnxn, name, acronym, nationality):
         # Insérer la nouvelle fédération dans la base de données
         query = "INSERT INTO Federations (FederationName, FederationAcronym, FederationNationalityID, FederationActive) VALUES ('{}', '{}', {}, 1)"
         formatted_query = query.format(name, acronym, nationality)

@@ -1,0 +1,5 @@
+INSERT INTO HaveNationality (WrestlerID, NationalityID) VALUES ('1', '179')
+INSERT INTO HaveNationality (WrestlerID, NationalityID) VALUES ('2', '31')
+INSERT INTO HaveNationality (WrestlerID, NationalityID) VALUES ('2', '179')
+INSERT INTO HaveNationality (WrestlerID, NationalityID) VALUES ('3', '189')
+INSERT INTO HaveNationality (WrestlerID, NationalityID) VALUES ('4', '56')

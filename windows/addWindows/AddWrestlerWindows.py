@@ -50,26 +50,26 @@ class AddWrestlerWindows(QWidget):
         lbl_nationality.move(280, 270)
         self.lst_nationality = QListWidget(self)
         self.lst_nationality.move(280, 300)
-        self.lst_nationality.resize(280, 30)
+        self.lst_nationality.resize(280, 100)
         self.lst_nationality.setSelectionMode(QListWidget.MultiSelection)
 
         # Date de naissance du catcheur
         lbl_date_of_birth = QLabel('Date of birth :', self)
-        lbl_date_of_birth.move(280, 330)
+        lbl_date_of_birth.move(280, 400)
         self.date_of_birth_edit = QDateTimeEdit(self)
         self.date_of_birth_edit.setCalendarPopup(True)  # Affiche un calendrier lors de la sélection
         self.date_of_birth_edit.setDisplayFormat("yyyy-MM-dd")  # Format d'affichage de la date
-        self.date_of_birth_edit.move(280, 360)
+        self.date_of_birth_edit.move(280, 430)
         self.date_of_birth_edit.resize(280, 30)
 
         # Alignement du catcheur
         lbl_alignment = QLabel('Alignment * :', self)
-        lbl_alignment.move(280, 390)
+        lbl_alignment.move(280, 460)
         self.cmb_alignment = QComboBox(self)
         self.cmb_alignment.addItem("Face")
         self.cmb_alignment.addItem("Heel")
         self.cmb_alignment.addItem("Tweener")
-        self.cmb_alignment.move(280, 420)
+        self.cmb_alignment.move(280, 490)
         self.cmb_alignment.resize(280, 30)
 
         # Activité du catcheur
@@ -193,8 +193,8 @@ class AddWrestlerWindows(QWidget):
 
     def insert_wrestler(self, cursor, cnxn, name, gender, nationalities, formatted_date, alignement, active, cagematch, theme, federations):
         # Insérer la nouvelle fédération dans la base de données
-        query = "INSERT INTO Wrestler (WrestlerName, WrestlerGender, WrestlerDateOfBirth, WrestlerAlignment, WrestlerActive, EventCagematchRating, EventTheme) VALUES ('{}', '{}', {}, {}, '{}')"
-        formatted_query = query.format(name, gender, "'" + formatted_date + "'", alignement, active, cagematch, theme)
+        query = "INSERT INTO Wrestlers (WrestlerName, WrestlerGender, WrestlerDateOfBirth, WrestlerAlignment, WrestlerActive, WrestlerCagematchRating, WrestlerTheme) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}')"
+        formatted_query = query.format(name, gender, formatted_date, alignement, active, cagematch, theme)
         cursor.execute(formatted_query)
         cnxn.commit()
 
@@ -207,9 +207,20 @@ class AddWrestlerWindows(QWidget):
         with open('BD/InsertWrestlersEloDB.sql', 'a') as file:
             file.write(formatted_query + "\n")
         file.close()
+
+        for nationality_id in nationalities:
+            query = "INSERT INTO HaveNationality (WrestlerID, NationalityID) VALUES ('{}', '{}')"
+            formatted_query = query.format(wrestler_id, nationality_id)
+            cursor.execute(formatted_query)
+            cnxn.commit()
+
+            # Sauvegarde de la query
+            with open('BD/InsertHaveNationality.sql', 'a') as file:
+                file.write(formatted_query + "\n")
+            file.close()
         
         for federation_id in federations:
-            query = "INSERT INTO HasOrganisedEvent (EventID, FederationID) VALUES ('{}', '{}')"
+            query = "INSERT INTO IsPartFederation (WrestlerID, FederationID) VALUES ('{}', '{}')"
             formatted_query = query.format(wrestler_id, federation_id)
             cursor.execute(formatted_query)
             cnxn.commit()
