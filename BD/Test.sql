@@ -10,6 +10,9 @@ FROM Events
 SELECT *
 FROM HasOrganisedEvent
 
+SELECT *
+FROM Wrestlers
+
 SELECT EventID, EventName, EventCagematchRating
 FROM Events
 ORDER BY EventCagematchRating DESC
