@@ -37,7 +37,7 @@ class AddWrestlerWindows(QWidget):
         self.txt_name.resize(280, 30)
 
         # Genre du catcheur
-        lbl_gender = QLabel('Gender * :', self)
+        lbl_gender = QLabel('Gender :', self)
         lbl_gender.move(280, 210)
         self.cmb_gender = QComboBox(self)
         self.cmb_gender.addItem("Man")
@@ -46,14 +46,15 @@ class AddWrestlerWindows(QWidget):
         self.cmb_gender.resize(280, 30)
 
         # Nationalité du catcheur
-        lbl_country = QLabel('Nationality * :', self)
-        lbl_country.move(280, 270)
-        self.cmb_country = QComboBox(self)
-        self.cmb_country.move(280, 300)
-        self.cmb_country.resize(280, 30)
+        lbl_nationality = QLabel('Nationality * :', self)
+        lbl_nationality.move(280, 270)
+        self.lst_nationality = QListWidget(self)
+        self.lst_nationality.move(280, 300)
+        self.lst_nationality.resize(280, 30)
+        self.lst_nationality.setSelectionMode(QListWidget.MultiSelection)
 
         # Date de naissance du catcheur
-        lbl_date_of_birth = QLabel('Date of birth * :', self)
+        lbl_date_of_birth = QLabel('Date of birth :', self)
         lbl_date_of_birth.move(280, 330)
         self.date_of_birth_edit = QDateTimeEdit(self)
         self.date_of_birth_edit.setCalendarPopup(True)  # Affiche un calendrier lors de la sélection
@@ -72,7 +73,7 @@ class AddWrestlerWindows(QWidget):
         self.cmb_alignment.resize(280, 30)
 
         # Activité du catcheur
-        lbl_active = QLabel('Active wrestler * :', self)
+        lbl_active = QLabel('Active wrestler :', self)
         lbl_active.move(840, 150)
         self.chk_active = QCheckBox(self)
         self.chk_active.setChecked(True)  # Coché par défaut
@@ -103,7 +104,7 @@ class AddWrestlerWindows(QWidget):
 
         # Boutton permettant d'ajouter l'évènement 
         btn_add = QPushButton('Add', self)
-        btn_add.move(650, 720)
+        btn_add.move(650, 550)
         btn_add.clicked.connect(self.submit_wrestler_clicked)
 
         # Requête permettant  de récupérer l'ensemble des nationnalités
@@ -118,7 +119,7 @@ class AddWrestlerWindows(QWidget):
 
         # Ajoute les nationnalités dans le menu déroulant
         for row in results:
-            self.cmb_country.addItem(row[0])
+            self.lst_nationality.addItem(row[0])
 
         query = "SELECT FederationName FROM Federations"
         cursor.execute(query)
@@ -137,7 +138,8 @@ class AddWrestlerWindows(QWidget):
         # préparation des paramètres de la bd
         name = self.txt_name.text()
         gender = self.cmb_gender.currentText()
-        country = self.cmb_country.currentText()
+        nationalities = self.lst_nationality.selectedItems()
+        nationalities = [item.text() for item in nationalities]
         selected_date_of_birth = self.date_of_birth_edit.dateTime()  # Récupérer la date et l'heure sélectionnées
         formatted_date = selected_date_of_birth.toString("yyyy-MM-dd HH:mm:ss")  # Formater la date dans le format datetime de SQL
         alignement = self.cmb_alignment.currentText()
@@ -146,6 +148,12 @@ class AddWrestlerWindows(QWidget):
         theme = self.txt_theme.text()
         federations = self.lst_federation.selectedItems()
         federations = [item.text() for item in federations]
+
+        # Requête pour récupérer l'ID du pays
+        query = "SELECT NationalityID FROM Nationalities WHERE NationalityName IN ({})"
+        formatted_query = query.format(",".join(["'{}'".format(nationality) for nationality in nationalities]))
+        cursor.execute(formatted_query)
+        nationalities = [row[0] for row in cursor.fetchall()]
             
         # Requête pour récuperer les ID des fédérations ayant organisé l'évènement
         query = "SELECT FederationID FROM Federations WHERE FederationName IN ({})"
@@ -153,20 +161,14 @@ class AddWrestlerWindows(QWidget):
         cursor.execute(formatted_query)
         federations = [row[0] for row in cursor.fetchall()]  # Liste des IDs de fédérations
 
-        # Requête pour récupérer l'ID du pays
-        query = "SELECT NationalityID FROM Nationalities WHERE NationalityName = '{}'"
-        formatted_query = query.format(country)
-        cursor.execute(formatted_query)
-        country = cursor.fetchone()[0]  # Récupérer la première colonne du résultat
-
         # Vérifier que tous les champs sont remplis
-        if name and gender and country and formatted_date:
+        if name and nationalities and federations:
             if active is True:
                 active = 1
             else:
                 active = 0
             if cagematch == "":
-                self.insert_wrestler(cursor, cnxn, name, gender, country, formatted_date, alignement, active, -1.0, theme, federations)
+                self.insert_wrestler(cursor, cnxn, name, gender, nationalities, formatted_date, alignement, active, -1.0, theme, federations)
             else:
                 try:
                     cagematch = float(cagematch)
@@ -177,7 +179,7 @@ class AddWrestlerWindows(QWidget):
                     msg_box.exec_()
                     return
                 if cagematch > 0 or cagematch < 10:
-                    self.insert_wrestler(cursor, cnxn, name, gender, country, formatted_date, alignement, active, cagematch, theme, federations)
+                    self.insert_wrestler(cursor, cnxn, name, gender, nationalities, formatted_date, alignement, active, cagematch, theme, federations)
                 else:
                     # Afficher un message d'erreur si un champ est manquant
                     msg_box = QMessageBox()
@@ -189,10 +191,10 @@ class AddWrestlerWindows(QWidget):
             msg_box.setText("Please fill in all required fields.")
             msg_box.exec_()
 
-    def insert_wrestler(cursor, cnxn, name, gender, country, formatted_date, alignement, active, cagematch, theme, federations):
+    def insert_wrestler(self, cursor, cnxn, name, gender, nationalities, formatted_date, alignement, active, cagematch, theme, federations):
         # Insérer la nouvelle fédération dans la base de données
-        query = "INSERT INTO Wrestler (WrestlerName, WrestlerGender, WrestlerNationalityID, WrestlerDateOfBirth, WrestlerAlignment, WrestlerActive, EventCagematchRating, EventTheme) VALUES ('{}', '{}', {}, {}, '{}')"
-        formatted_query = query.format(name, gender, country, "'" + formatted_date + "'", alignement, active, cagematch, theme)
+        query = "INSERT INTO Wrestler (WrestlerName, WrestlerGender, WrestlerDateOfBirth, WrestlerAlignment, WrestlerActive, EventCagematchRating, EventTheme) VALUES ('{}', '{}', {}, {}, '{}')"
+        formatted_query = query.format(name, gender, "'" + formatted_date + "'", alignement, active, cagematch, theme)
         cursor.execute(formatted_query)
         cnxn.commit()
 
