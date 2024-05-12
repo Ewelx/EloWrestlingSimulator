@@ -1,2 +1,2 @@
 # EloWrestlingSimulator
-Wrestling simulator elo
+Wrestling simulator elo (personnal project)
