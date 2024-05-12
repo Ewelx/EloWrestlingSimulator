@@ -1,7 +1,8 @@
 import pyodbc
 
-def BDConnection():
-    # Paramètres de connexion
+# Function to establish a connection to the database
+def DBConnection():
+    # Specify the parameters required for the database connection
     server = 'localhost'
     database = 'WrestlingEloDB'
     
