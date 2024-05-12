@@ -1,10 +1,10 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QLabel, QPushButton, QMainWindow
-from PyQt5.QtGui import QPixmap
 import os
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton 
+import sys
 import windows.AddWindows as AddWindows
 
-#The windows that showed up at application launch
+# The windows that showed up at application launch
 class MainWindows(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -12,48 +12,53 @@ class MainWindows(QMainWindow):
         self.add_window = None
 
     def initUI(self):
-        #Fenêtre de base de l'écran
+        # Base screen window
         self.setWindowTitle('Wrestling Elo Simulator')
         self.setFixedSize(1725, 800)
         self.center()
 
-        # Charger l'image en tant que pixmap
+        # Charge the picture as a pixmap
         image_path = os.path.join("Images", "Fond", "resized_WES.png")
         pixmap = QPixmap(image_path)
 
-        # Créer un label pour afficher l'image
+        # Create a label to display the picture
         label = QLabel(self)
         label.setPixmap(pixmap)
         label.setGeometry(0, 0, self.width(), self.height())
 
-        # Création des boutons
-        btn_ajouter = QPushButton('Add', self)
-        btn_modifier = QPushButton('Modify', self)
-        btn_supprimer = QPushButton('Delete', self)
-        btn_classement = QPushButton('Ladder', self)
-        # Aggrandissement des boutons
-        btn_ajouter.resize(150, 75)
-        btn_modifier.resize(150, 75)
-        btn_supprimer.resize(150, 75)
-        btn_classement.resize(150, 75)
-        # Placer les boutons dans la fenêtre
-        btn_ajouter.move(770, 100)
-        btn_modifier.move(770, 225)
-        btn_supprimer.move(770, 350)
-        btn_classement.move(770, 475)
-        # Changement de la taille du texte des boutons
-        font = btn_ajouter.font()
-        font.setPointSize(13)
-        btn_ajouter.setFont(font)
-        btn_modifier.setFont(font)
-        btn_supprimer.setFont(font)
-        btn_classement.setFont(font)
-        # Connecter le signal clicked des boutons à des méthodes
-        btn_ajouter.clicked.connect(self.on_btn_ajouter_clicked)
-        btn_modifier.clicked.connect(self.on_btn_modifier_clicked)
-        btn_supprimer.clicked.connect(self.on_btn_supprimer_clicked)
-        btn_classement.clicked.connect(self.on_btn_classement_clicked)
+        # Button creation
+        btn_add = QPushButton('Add', self)
+        btn_modify = QPushButton('Modify', self)
+        btn_delete = QPushButton('Delete', self)
+        btn_ladder = QPushButton('Ladder', self)
 
+        # Enlargement of the buttons
+        btn_add.resize(150, 75)
+        btn_modify.resize(150, 75)
+        btn_delete.resize(150, 75)
+        btn_ladder.resize(150, 75)
+
+        # Placement of the buttons in the window
+        btn_add.move(770, 100)
+        btn_modify.move(770, 225)
+        btn_delete.move(770, 350)
+        btn_ladder.move(770, 475)
+
+        # Change buttons font-size
+        font = btn_add.font()
+        font.setPointSize(13)
+        btn_add.setFont(font)
+        btn_modify.setFont(font)
+        btn_delete.setFont(font)
+        btn_ladder.setFont(font)
+
+        # Connect clicked event of buttons to method (that will permit reach next windows)
+        btn_add.clicked.connect(self.on_btn_add_clicked)
+        btn_modify.clicked.connect(self.on_btn_modify_clicked)
+        btn_delete.clicked.connect(self.on_btn_delete_clicked)
+        btn_ladder.clicked.connect(self.on_btn_ladder_clicked)
+
+    # Center the window
     def center(self):
         frameGm = self.frameGeometry()
         screen = QApplication.desktop().screenNumber(QApplication.desktop().cursor().pos())
@@ -61,20 +66,26 @@ class MainWindows(QMainWindow):
         frameGm.moveCenter(centerPoint)
         self.move(frameGm.topLeft())
 
-    def on_btn_ajouter_clicked(self):
-        if self.add_window is None:  # Vérifier si la fenêtre existe déjà
+    # When the button 'Add' is clicked
+    def on_btn_add_clicked(self):
+        # Display 'add_window' window
+        if self.add_window is None:  # Vérify if the window already exist
             self.add_window = AddWindows.AddWindows()
-        self.add_window.show()
+            self.add_window.show()
     
-    def on_btn_modifier_clicked(self):
-        print('1')
+    # When the button 'Modify' is clicked
+    def on_btn_modify_clicked(self):
+        print('TODO : Modify')
 
-    def on_btn_supprimer_clicked(self):
-        print('3')
+    # When the button 'Delete' is clicked
+    def on_btn_delete_clicked(self):
+        print('TODO : Delete')
 
-    def on_btn_classement_clicked(self):
-        print('4')
+    # When the button 'Ladder' is clicked
+    def on_btn_ladder_clicked(self):
+        print('TODO : Ladder')
 
+# Create the interface
 def createInterface():
     app = QApplication(sys.argv)
     widget = MainWindows()
